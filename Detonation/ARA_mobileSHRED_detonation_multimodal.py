@@ -45,20 +45,18 @@ def mse_error(Ypred, Ytest):
     err = np.linalg.norm(Ypred - Ytest) / np.linalg.norm(Ytest) 
     return err
 
-# %% [markdown]
-# # Open the video file on doppio
-# 
-
 # %%
-
+# Videos of temperature, pressure, and gas concentration
 temperature_mp4 = '/home/mebers/SHRED/ARA/Detonation/ARA_Data/T.mp4'  
 pressure_mp4 = '/home/mebers/SHRED/ARA/Detonation/ARA_Data/p.mp4'  
-gas_mp4 = '/home/mebers/SHRED/ARA/Detonation/ARA_Data/alpha_gas.mp4'  # test.mp4 is the dataset given to me by Mike with a small time window but large temporal resolution
+gas_mp4 = '/home/mebers/SHRED/ARA/Detonation/ARA_Data/alpha_gas.mp4'  
+# test.mp4 is the dataset with a small time window but large temporal resolution
 
 T_full = imageio2array(temperature_mp4)
 p_full = imageio2array(pressure_mp4)
 gas_full = imageio2array(gas_mp4)
 
+# Cropped videos
 #T = T[:,250:520,456:1149]
 #p = p[:,250:520,456:1149]
 #gas = gas[:,250:520,456:1149]
@@ -86,7 +84,7 @@ plt.title('Cropped state space')
 plt.show()
 
 # %%
-# just chose the first RBG signal
+# Crop the videos to include only explosion dynamics; Chose the first RBG signal
 gas = gas_full[:,251:521,457:1150,0]
 T = T_full[:,251:521,457:1150,0]
 p = p_full[:,251:521,457:1150,0]
@@ -238,6 +236,7 @@ print(out_X.shape)
 # sklearn's MinMaxScaler is used to preprocess the data for training and we generate input/output pairs for the training, validation, and test sets. 
 
 # %%
+# MinMax scaling isn't used here, since the videos are just RBG values
 #sc = MinMaxScaler()
 #sc = sc.fit(load_X[train_indices])
 #transformed_X = sc.transform(load_X)
@@ -357,24 +356,5 @@ plt.imshow(np.reshape(test_ground_truth, (-1, row, col, signals))[idx[2]].astype
 plt.title('test = {}'.format(idx[2]))
 plt.axis('off')  # Hide axes
 plt.tight_layout()
-
-
-
-# %% [markdown]
-# ## SVD rank
-
-# %%
-X = load_X[train_indices]
-
-rank = int(np.round((lags-1)/2))
-print(rank)
-
-U, s, Vh = np.linalg.svd(X, full_matrices=False)
-S = np.zeros((rank,rank))
-np.fill_diagonal(S, s)
-
-Xr = U[:,0:rank] @ S[0:rank,0:rank] @ Vh[0:rank,:]
-
-calc_MSE(Xr, X)
 
 

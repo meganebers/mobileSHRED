@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append('/home/mebers/SHRED/SHRED_code/')
-from executeMobileSHRED import mse_error
 
 # %%
 import imageio
@@ -42,6 +41,9 @@ def imageio2array(video_capture):
     # Convert the list of frames to a 3D NumPy array
     return video_array
 
+def mse_error(Ypred, Ytest):
+    err = np.linalg.norm(Ypred - Ytest) / np.linalg.norm(Ytest) 
+    return err
 
 # %% [markdown]
 # # Open the video file on doppio

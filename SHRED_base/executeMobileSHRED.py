@@ -44,61 +44,6 @@ def transform_data(load_X, train_indices):
 
     return transformed_X, sc
 
-
-def scale_and_standardize(data, train_indices):
-    """
-    Perform scaling to the range [0, 1] and standardizing (centering and normalizing) on the given dataset.
-
-    Parameters:
-    - data: numpy array or pandas DataFrame
-        The input dataset.
-
-    Returns:
-    - scaled_and_standardized_data: numpy array
-        The scaled and standardized dataset.
-    """
-    # Step 1: Scale to the range [0, 1]
-    min_max_scaler = MinMaxScaler(feature_range=(0, 1))
-    scaler = min_max_scaler.fit(data[train_indices])
-
-    mu=np.mean(scaled_data[train_indices], axis=0)
-    sig=np.std(scaled_data[train_indices], axis=0)
-
-    scaled_data = scaler.transform(data)
-
-    # Step 2: Center and normalize
-    centered_and_normalized_data = (scaled_data - mu) / sig
-
-    return centered_and_normalized_data
-
-
-def reverse_scale_and_standardize(scaled_and_standardized_data, original_data):
-    """
-    Reverse the scaling and standardizing operations on the given dataset.
-
-    Parameters:
-    - scaled_and_standardized_data: numpy array or pandas DataFrame
-        The scaled and standardized dataset.
-    - original_data: numpy array or pandas DataFrame
-        The original dataset before scaling and standardizing.
-
-    Returns:
-    - reversed_data: numpy array
-        The dataset after reversing the scaling and standardizing operations.
-    """
-    mu=np.mean(original_data, axis=0)
-    sig=np.std(original_data, axis=0)
-
-    # Step 1: Reverse normalization
-    rescaled_data = scaled_and_standardized_data * sig + mu
-
-    # Step 2: Reverse rescaling
-    min_max_scaler = MinMaxScaler(feature_range=(0, 1))
-    reversed_data = min_max_scaler.inverse_transform(rescaled_data)
-
-    return reversed_data
-
-
 def trainshred(load_X, sensor_locations, lags):
 
     [n,m] = load_X.shape
